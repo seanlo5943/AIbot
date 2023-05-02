@@ -14,6 +14,34 @@ line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parse = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 
+def get_movie():
+    i = 0
+
+    try:
+        url = 'https://movies.yahoo.com.tw/chart.html'
+        resp = requests.get(url)
+        soup = BeautifulSoup(resp.text, 'lxml')
+        trs = soup.find('div', class_="rank_list table rankstyle1").find_all(
+            'div', class_='tr')
+        for tr in trs[1:]:
+            tds = tr.find_all('div', class_='td')
+            rank = tds[0].text.strip()
+            last_rank = tds[2].text.strip()
+            if i == 0:
+                title = tds[3].find('h2').text.strip()
+            else:
+                title = tds[3].text.strip()
+            link = tds[3].find('a').get('href')
+            i += 1
+            data += f"{rank} {title} {link}\n"
+        print(data)
+
+        return data
+    except Exception as e:
+        print(e)
+        return '取得排行中，請稍後在試...'
+
+
 def get_biglottery():
     try:
         url = 'https://www.taiwanlottery.com.tw/lotto/lotto649/history.aspx'
@@ -64,6 +92,8 @@ def callback(request):
                     message = '晚安'
                 elif '早安' in text:
                     message = '早安你好!'
+                elif '電影' in text:
+                    message = get_movie()
                 elif '捷運' in text:
                     mrts = {
                         '台北': 'https://web.metro.taipei/pages/assets/images/routemap2023n.png',
