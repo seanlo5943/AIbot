@@ -15,14 +15,14 @@ parse = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 
 def get_movie():
-    i = 0
-
+    
     try:
         url = 'https://movies.yahoo.com.tw/chart.html'
         resp = requests.get(url)
         soup = BeautifulSoup(resp.text, 'lxml')
         trs = soup.find('div', class_="rank_list table rankstyle1").find_all(
             'div', class_='tr')
+        i = 0
         for tr in trs[1:]:
             tds = tr.find_all('div', class_='td')
             rank = tds[0].text.strip()
