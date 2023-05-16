@@ -15,7 +15,7 @@ parse = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 
 def get_movie():
-    
+    data=''
     try:
         url = 'https://movies.yahoo.com.tw/chart.html'
         resp = requests.get(url)
